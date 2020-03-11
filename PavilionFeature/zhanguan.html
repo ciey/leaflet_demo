@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>昆明滇池国际会展中心节点法运维管理平台</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
+    
+    <script src="js/jquery-1.9.1.js"></script>
+
+    <link rel="stylesheet" href="js/leaflet-0.7.7/leaflet.css" />
+    <script src="js/leaflet-0.7.7/leaflet-src.js"></script>
+    
+    <script src="js/TileLayer.GeoJSON.js"></script>
+
+    <link rel="stylesheet" href="js/leaflet-0.7.3/leaflet.draw.css" />
+    <script src="js/leaflet-0.7.3/leaflet.draw-src.js"></script>
+
+    <link rel="stylesheet" href="js/Leaflet.label-master/dist/leaflet.label.css" />
+    <script src="js/Leaflet.label-master/dist/leaflet.label.js"></script>
+
+    <link rel="stylesheet" href="js/Leaflet.MousePosition-master/src/L.Control.MousePosition.css" />
+    <script src="js/Leaflet.MousePosition-master/src/L.Control.MousePosition.js"></script>
+
+    <link rel="stylesheet" href="js/map.css" />
+
+    <link rel="stylesheet" href="js/easyui/themes/bootstrap/easyui.css" />
+    <link rel="stylesheet" href="js/easyui/themes/icon.css" />
+    <script src="js/easyui/jquery.easyui.min.js"></script>
+
+    <script src="js/geojson_function.js"></script>
+
+    <link rel="stylesheet" href="js/zhanguan.css" />
+    <link rel="stylesheet" type="text/css" href="js/jquery.selectlist.css">
+    <script src="js/jquery.selectlist.js"></script>
+    <style>
+        .topbar {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 89px;
+            z-index: 10;
+            background: url('images/topbg2.jpg') repeat-x
+        }
+        
+        .topbarbg {
+            position: absolute;
+            top: 0;
+            z-index: 1;
+            width: 100%;
+            height: 88px;
+            /*  background: url('WebManage/images/top_bg.png') repeat-x;*/
+            background: #000;
+            opacity: .2;
+            filter: alpha(opacity=20)
+        }
+        
+        .topleft {
+            height: 88px;
+            float: left;
+        }
+        
+        .topleft img {
+            margin-top: 12px;
+            margin-left: 10px;
+        }
+        
+        .exit {
+            color: white;
+            text-align: right;
+            font-family: Microsoft YaHei, Tahoma, SimSun, Verdana;
+            font-size: 28px;
+            padding-top: 20px;
+            padding-right: 30px;
+        }
+        
+        .route-floor-box {
+            display: inline-block;
+            vertical-align: middle;
+            padding-left: 10px;
+            width: 210px;
+            border-top: 1px solid #efefef;
+            /*border-bottom: 1px solid #efefef;*/
+            position: relative;
+        }
+        
+        .route-floor-box input {
+            width: 135px;
+            height: 25px;
+            line-height: 26px;
+            display: inline-block;
+            border: 0;
+            border-bottom: 1px solid #eaebed;
+            font-size: 13px;
+            color: #333;
+            padding: 5px 0 5px 5px;
+            vertical-align: middle;
+        }
+        
+        .route-floor-box i {
+            display: inline-block;
+            width: 11px;
+            height: 11px;
+            position: relative;
+            top: 3px;
+            top: 5px/0;
+        }
+        
+        .route-floor-box i {
+            background: url(images/mo_banner_ba37b5d.png) no-repeat -44px -210px;
+        }
+        
+        .floor_list {
+            display: none;
+            margin-left: 21px;
+            padding: 0;
+            width: 141px;
+            position: absolute;
+            top: 37px;
+            left: 0;
+            background-color: #ffffff;
+            border: solid 1px #b4b4b4;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+            -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+        }
+        
+        .route-floor-box ul {
+            z-index: 2;
+        }
+        
+        .route-floor-box ul li {
+            float: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .route-floor-box li {
+            margin: 0 5px;
+            padding: 0 0 8px;
+            float: left;
+            position: relative;
+            list-style: none;
+        }
+        
+        .route-floor-box li {
+            display: list-item;
+            text-align: -webkit-match-parent;
+        }
+        
+        .route-floor-box ul a {
+            font-weight: bold;
+            text-shadow: 0 1px 0 #fff;
+        }
+        
+        .route-floor-box a {
+            font-weight: bold;
+            text-decoration: none;
+            display: block;
+            padding: 10px 8px 8px 20px;
+            margin: 0;
+            font-size: 13px;
+            -webkit-border-radius: 1.6em;
+            -moz-border-radius: 1.6em;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+        }
+        
+        .route-floor-box a {
+            color: #7A378B;
+        }
+        
+        .route-floor-box a:-webkit-any-link {
+            color: -webkit-link;
+            text-decoration: underline;
+            cursor: auto;
+        }
+        
+        .floor-icon {
+            background: url(images/mo_banner_ba37b5d.png) no-repeat -44px -210px;
+            display: inline-block;
+            width: 11px;
+            height: 11px;
+            position: relative;
+            top: 3px;
+            top: 5px/0;
+            margin-left: 5px;
+        }
+        
+        .title {
+            width: auto;
+            height: 36px;
+            background-color: #E4F3F6;
+            margin-bottom: 5px;
+        }
+        
+        .title span {
+            font: normal 16px 'Microsoft Yahei';
+            line-height: 36px;
+            padding-left: 15px;
+        }
+        
+    </style>
+    
+
+</head>
+
+<body class="easyui-layout">
+    <script>
+        jQuery('body').addClass('js');
+    </script>
+    <div data-options="region:'north'" style="height:90px;">
+        <div class="topbar">
+            <div class="topleft">
+                <img alt="" src="images/logotop.png" title="logo" />
+            </div>
+            <div class="exit">
+                <img alt="" onclick="javascript: window.location.href = '../../../main.aspx#slide5';" style="cursor:pointer" src="images/return.png" title="返回" runat="server" />
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'west',split:true" style="width:250px;">
+        <div class="easyui-layout" data-options="fit:true,border:false">
+            <div class="title">
+                <span>楼层</span>
+            </div>
+            <i class="floor-icon"></i>
+            <select id="floor" name="floor">
+                <option value="0">B1F</option>
+                <option value="1">1F</option>
+                <option value="2">2F</option>
+                <option value="3">2MF</option>
+                <option value="4">3F</option>
+                <option value="5">3M1F</option>
+                <option value="6">3M2F</option>
+                <option value="7">屋顶层</option>
+            </select>
+            <div class="title" style="margin-top: 20px;">
+                <span>功能</span>
+            </div>
+            <div class="checklist checkbox_B1F unshow">
+                <ul style="padding-left: 10px;margin-bottom: 10px;">
+
+                </ul>
+            </div>
+            <div class="checklist checkbox_1F unshow">
+                <ul style="padding-left: 10px;margin-bottom: 10px;">
+                    <li>
+                        <input type="checkbox" name="check-box" value="C01" /> <span>展馆</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C02" /> <span>商业</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C03" /> <span>展馆配套</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C04" /> <span>管理用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C05" /> <span>设备用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C06" /> <span>垂直交通</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C07" /> <span>卫生保洁</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C08" /> <span>公共空间</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C09" /> <span>道路</span></li>
+                </ul>
+            </div>
+            <div class="checklist checkbox_2F unshow">
+                <ul style="padding-left: 10px;margin-bottom: 10px;">
+                    <li>
+                        <input type="checkbox" name="check-box" value="C01" /> <span>展馆</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C02" /> <span>商业</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C03" /> <span>展馆配套</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C04" /> <span>管理用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C05" /> <span>设备用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C06" /> <span>垂直交通</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C07" /> <span>卫生保洁</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C08" /> <span>公共空间</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C09" /> <span>道路</span></li>
+                </ul>
+            </div>
+            <div class="checklist checkbox_2MF unshow">
+                <ul style="padding-left: 10px;margin-bottom: 10px;">
+                    <li>
+                        <input type="checkbox" name="check-box" value="C01" /> <span>展馆</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C02" /> <span>商业</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C03" /> <span>展馆配套</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C04" /> <span>管理用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C05" /> <span>设备用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C06" /> <span>垂直交通</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C07" /> <span>卫生保洁</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C08" /> <span>公共空间</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C09" /> <span>道路</span></li>
+                </ul>
+            </div>
+            <div class="checklist checkbox_3F">
+                <ul style="padding-left: 10px;margin-bottom: 10px;">
+                    <li>
+                        <input type="checkbox" name="check-box" value="C01" /> <span>展馆</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C02" /> <span>商业</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C03" /> <span>展馆配套</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C04" /> <span>管理用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C05" /> <span>设备用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C06" /> <span>垂直交通</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C07" /> <span>卫生保洁</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C08" /> <span>公共空间</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C09" /> <span>道路</span></li>
+                </ul>
+            </div>
+            <div class="checklist checkbox_3M1F unshow">
+                <ul style="padding-left: 10px;margin-bottom: 10px;">
+                    <li>
+                        <input type="checkbox" name="check-box" value="C01" /> <span>展馆</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C02" /> <span>商业</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C03" /> <span>展馆配套</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C04" /> <span>管理用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C05" /> <span>设备用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C06" /> <span>垂直交通</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C07" /> <span>卫生保洁</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C08" /> <span>公共空间</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C09" /> <span>道路</span></li>
+                </ul>
+            </div>
+            <div class="checklist checkbox_3M2F unshow">
+                <ul style="padding-left: 10px;margin-bottom: 10px;">
+                    <li>
+                        <input type="checkbox" name="check-box" value="C01" /> <span>展馆</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C02" /> <span>商业</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C03" /> <span>展馆配套</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C04" /> <span>管理用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C05" /> <span>设备用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C06" /> <span>垂直交通</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C07" /> <span>卫生保洁</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C08" /> <span>公共空间</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C09" /> <span>道路</span></li>
+                </ul>
+            </div>
+            <div class="checklist checkbox_WDF unshow">
+                <ul style="padding-left: 10px;margin-bottom: 10px;">
+                    <li>
+                        <input type="checkbox" name="check-box" value="C01" /> <span>展馆</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C02" /> <span>商业</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C03" /> <span>展馆配套</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C04" /> <span>管理用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C05" /> <span>设备用房</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C06" /> <span>垂直交通</span></li>
+                    <li>
+                        <input type="checkbox" name="check-box" value="C07" /> <span>卫生保洁</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div data-options="region:'center'">
+        <div id="map"></div>
+        <div id="win" class="easyui-window" title="Modal Window" data-options="modal:true,closed:true,inline:true,iconCls:'icon-remove'" style="width:100%;height:100%;padding:10px;">
+            <iframe id="iframe" src="zhanguan.iframe.html" width="100%" height="99%" frameborder="0"></iframe>
+        </div>
+    </div>
+
+
+    <!--  </div> -->
+    <script>
+        var mapMinZoom = 16;
+        var mapMaxZoom = 20;
+        //add transparent markers
+        var transIcon = L.Icon.extend({});
+        var transmarker = new transIcon({
+            iconUrl: 'images/markers/trans.png'
+        });
+
+        var notcollapsed = {
+            collapsed: false
+        }; //控制按钮不折叠选项
+
+
+
+
+
+        var floorSelected = "3F"; //楼层定义
+
+        //分类
+        var categories = {
+            "3F": [{
+                desc: "展馆",
+                cate: "C01"
+            }, {
+                desc: "商业",
+                cate: "C02"
+            }],
+            "F2": [{
+                desc: "展馆",
+                cate: "L1"
+            }],
+            "B1": [{
+                desc: "停车区域",
+                cate: "L1"
+            }],
+        };
+
+
+        //功能数据及分类的定义
+        var geodata_f = {
+            "3F": geojson_F3_f,
+            "2F": geojson_F2_f,
+            "1F": geojson_F1_f
+        };
+
+        var map = L.map('map', {
+            layers: null,
+            //zoomControl: false,
+            maxZoom: mapMaxZoom,
+            minZoom: mapMinZoom,
+            attributionControl: false,
+            crs: L.CRS.Simple
+        }).setView([-0.00552, 0.00954], 16);
+
+        var B1line = L.tileLayer('tiles/B1_line/{z}/{x}/{y}.png', {
+            minZoom: mapMinZoom,
+            maxZoom: 6,
+            attributionControl: false,
+            noWrap: true,
+            continuousWorld: true,
+        });
+
+        var _1Fline = L.tileLayer('tiles/1F_line/{z}/{x}/{y}.png', {
+            minZoom: mapMinZoom,
+            maxZoom: mapMaxZoom,
+            attributionControl: false,
+            noWrap: true,
+            continuousWorld: true,
+        });
+
+        var _2Fline = L.tileLayer('tiles/2F_line/{z}/{x}/{y}.png', {
+            minZoom: mapMinZoom,
+            maxZoom: mapMaxZoom,
+            attributionControl: false,
+            noWrap: true,
+            continuousWorld: true,
+            zIndex: 1000
+        });
+
+        var _2MFline = L.tileLayer('tiles/2MF_line/{z}/{x}/{y}.png', {
+            minZoom: mapMinZoom,
+            maxZoom: mapMaxZoom,
+            attributionControl: false,
+            noWrap: true,
+            continuousWorld: true,
+        });
+
+        var _3Fline = L.tileLayer('tiles/3F_line/{z}/{x}/{y}.png', {
+            minZoom: mapMinZoom,
+            maxZoom: mapMaxZoom,
+            attributionControl: false,
+            noWrap: true,
+            continuousWorld: true
+        });
+
+        var _3FM1Fline = L.tileLayer('tiles/3M1F_line/{z}/{x}/{y}.png', {
+            minZoom: mapMinZoom,
+            maxZoom: mapMaxZoom,
+            attributionControl: false,
+            noWrap: true,
+            continuousWorld: true,
+        });
+
+        var _3M2Fline = L.tileLayer('tiles/3M2F_line/{z}/{x}/{y}.png', {
+            minZoom: mapMinZoom,
+            maxZoom: mapMaxZoom,
+            attributionControl: false,
+            noWrap: true,
+            continuousWorld: true,
+        });
+
+        var _WDFline = L.tileLayer('tiles/WDF_line/{z}/{x}/{y}.png', {
+            minZoom: mapMinZoom,
+            maxZoom: mapMaxZoom,
+            attributionControl: false,
+            noWrap: true,
+            continuousWorld: true,
+        });
+
+
+        // Layer control, setting up 1 layer per category
+        var layers = {},
+            cultureLayer = L.layerGroup(),
+            layerCtrl = L.control.layers();
+        
+                
+        
+        //mousePosition tool
+        L.control.mousePosition().addTo(map);
+        L.control.scale().addTo(map);
+
+        //map.addControl(new L.Control.Zoom({
+        //    position: "topleft"
+        //})); //bottomright
+
+        function data_popup(layer) {
+            //var layer = e.target;
+            var shape_for_db = JSON.stringify(layer.toGeoJSON());
+            L.popup({
+                    maxWidth: 650
+                })
+                .setLatLng(layer.getBounds().getCenter())
+                .setContent("<label for='name'>热区数据：" + "</label>" +
+                    "<textarea style='width: 600px;height: 300px;'>" + shape_for_db + "</textarea>")
+                .openOn(map);
+        }
+
+        map.on("draw:created", function (e) {
+            //layerGroup.addLayer(e.layer);
+            var shape_for_db = JSON.stringify(e.layer.toGeoJSON());
+
+            var featureGroup = L.featureGroup([e.layer])
+                .on('click', function () {
+                    data_popup(e.layer);
+                })
+                .addTo(map);
+            data_popup(e.layer);
+
+        });
+
+        var drawPolygon = new L.Draw.Polygon(map);
+        //  drawPolygon.enable();-
+
+        var drawBtn = L.control({
+            "position": "bottomleft"
+        });
+        drawBtn.onAdd = function (map) {
+            var container = L.DomUtil.create("div", "draw-container");
+            var btn = L.DomUtil.create("input", "draw-btn", container);
+            btn.value = "作图";
+            btn.type = "button";
+            L.DomEvent.on(container, "click", function (e) {
+                L.DomEvent.stop(e);
+            });
+            L.DomEvent.on(btn, "click", function (e) {
+                drawPolygon.enable();
+            });
+            return container;
+        };
+        drawBtn.addTo(map);
+
+        //加载分类热区数据
+        function displayFeatures_c(features, cate) {
+            for (var fe in features) {
+                var feat = features[fe];
+                if (cate == feat.properties.REG_CATE) {
+                    var cat = feat.properties.REG_CATE;
+                    var site = new L.GeoJSON(feat, {
+                        style: {
+                            "color": "red",
+                            "weight": 0,
+                            "opacity": 1,
+                            "fillOpacity": 1,
+                            "fillColor": feat.properties.FILLCOLOR
+                        },
+                        onEachFeature: function (feature, layer) {
+                            feature.layer = layer;
+                        }
+                    });
+
+                        map.addLayer(site);
+
+                }
+            }
+            return layers;
+        }
+
+
+        //加载分类热区数据
+        function displayFeatures_f(features, layers, cate) {
+            var  screenWidth  =  $(window).width(),
+                 screenHeight  =  $(window).height();
+            
+            //最上一层热区
+            for (var fe in features) {
+
+                var feat = features[fe];
+
+                if (cate == feat.properties.REG_CATE) {
+                    var cat = feat.properties.REG_CATE;
+                    var site = L.geoJson(feat, {
+                        style: {
+                            "color": "red",
+                            "weight": 0,
+                            "opacity": 1,
+                            "fillOpacity": 0.4,
+                            "fillColor": feat.properties.FILLCOLOR
+                        },
+                        onEachFeature: function (feature, layer) {
+                            feature.layer = layer;
+                            layer.bindLabel(feature.properties.REG_CNAME + ', ' + feature.properties.REG_CODE).on('click', function () {
+                                $("#win").panel({
+                                    title: feature.properties.REG_CNAME
+                                });
+                                $('#win').window('open');
+                                $("#iframe").attr("src", "function.iframe.html?id=" + feature.properties.REG_ID + "&code=" + feature.properties.REG_CODE);
+                            })
+
+
+                            layer.on({
+                                mouseover: function (e) {
+                                    e.target.setStyle({
+                                        weight: 2
+                                    });
+                                },
+                                mouseout: function (e) {
+                                    e.target.setStyle({
+                                        weight: 0
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    var layer = layers[cat];
+                    if (layer !== undefined) {
+                        layer.addLayer(site);
+                        map.addLayer(site);
+                    } else {
+                        layers[cat] = L.featureGroup().bringToFront();
+                        layers[cat].addLayer(site);
+                        map.addLayer(site);
+                    }
+
+                }
+            }
+            
+            //最底下一层热区
+          /*  for (var fe in features) {
+
+                var feat = features[fe];
+
+                if (cate == feat.properties.REG_CATE) {
+                    var cat = feat.properties.REG_CATE;
+                    var site = L.geoJson(feat, {
+                        style: {
+                            "color": "red",
+                            "weight": 0,
+                            "opacity": 1,
+                            "fillOpacity": 0.9,
+                            "fillColor": feat.properties.FILLCOLOR
+                        },
+                        
+                    });
+
+                    var layer = layers[cat+"s"];
+                    if (layer !== undefined) {
+                        layer.addLayer(site);
+                        map.addLayer(site);
+                    } else {
+                        layers[cat+"s"] = L.featureGroup().bringToFront();
+                        layers[cat+"s"].addLayer(site);
+                        map.addLayer(site);
+                    }
+
+                }
+            }*/
+            return layers;
+        }
+
+
+
+
+
+        //楼层选择Selectlist初始化
+        $(function () {
+            $('select').selectlist({
+                zIndex: 10,
+                width: 210,
+                height: 40,
+                defaultValues: '3F',
+                onChange: function () {
+                    ChangeFloor($("#floor").find("li.selected").text());
+                }
+            });
+
+        });
+
+        function ChangeFloor(obj) {
+            if (obj != floorSelected) {
+                floorSelected = obj;
+                map.eachLayer(function (layer) {
+                    map.removeLayer(layer);
+                });
+
+                if (obj == 'B1F') {
+                    $('.checklist').each(function () {
+                        $(this).addClass("unshow");
+                    })
+                    $('.checkbox_B1F').removeClass("unshow"); //移除即显示
+
+                    $('.checkbox_B1F').find('input').each(function () {
+                        if (true == $(this).prop("checked")) {
+                            LayerChecked($(this).val());
+                        }
+                    })
+                    map.addLayer(B1line).setView([-0.00552, 0.00954], 16);
+                    
+                } 
+                else if (obj == '1F') {
+                    $('.checklist').each(function () {
+                        $(this).addClass("unshow");
+                    })
+                    $('.checkbox_1F').removeClass("unshow"); //移除即显示
+
+                    $('.checkbox_1F').find('input').each(function () {
+                        if (true == $(this).prop("checked")) {
+                            LayerChecked($(this).val());
+                        }
+                    })
+                    map.addLayer(_1Fline).setView([-0.00552, 0.00954], 16);
+                    
+                } 
+                else if (obj == '2F') {
+                    $('.checklist').each(function () {
+                        $(this).addClass("unshow");
+                    })
+                    $('.checkbox_3F').removeClass("unshow"); //移除即显示
+
+                    $('.checkbox_3F').find('input').each(function () {
+                        if (true == $(this).prop("checked")) {
+                            LayerChecked($(this).val());
+                        }
+                    })
+                    map.addLayer(_2Fline).setView([-0.00552, 0.00954], 16);
+                    
+                } 
+                else if (obj == '2MF') {
+                    $('.checklist').each(function () {
+                        $(this).addClass("unshow");
+                    })
+                    $('.checkbox_2MF').removeClass("unshow"); //移除即显示
+
+                    $('.checkbox_2MF').find('input').each(function () {
+                        if (true == $(this).prop("checked")) {
+                            LayerChecked($(this).val());
+                        }
+                    })
+                    map.addLayer(_2MFline).setView([-0.00552, 0.00954], 16);
+                    
+                } 
+                else if (obj == '3F') {
+                    $('.checklist').each(function () {
+                        $(this).addClass("unshow");
+                    })
+                    $('.checkbox_3F').removeClass("unshow"); //移除即显示
+
+                    $('.checkbox_3F').find('input').each(function () {
+                        if (true == $(this).prop("checked")) {
+                            LayerChecked($(this).val());
+                        }
+                    })
+                    map.addLayer(_3Fline).setView([-0.00552, 0.00954], 16);
+                    
+                } 
+                else if (obj == '3M1F') {
+                    $('.checklist').each(function () {
+                        $(this).addClass("unshow");
+                    })
+                    $('.checkbox_3M1F').removeClass("unshow"); //移除即显示
+
+                    $('.checkbox_3M1F').find('input').each(function () {
+                        if (true == $(this).prop("checked")) {
+                            LayerChecked($(this).val());
+                        }
+                    })
+                    map.addLayer(_3FM1Fline).setView([-0.00552, 0.00954], 16);
+                    
+                }
+                else if (obj == '3M2F') {
+                    $('.checklist').each(function () {
+                        $(this).addClass("unshow");
+                    })
+                    $('.checkbox_3M1F').removeClass("unshow"); //移除即显示
+
+                    $('.checkbox_3M1F').find('input').each(function () {
+                        if (true == $(this).prop("checked")) {
+                            LayerChecked($(this).val());
+                        }
+                    })
+                    map.addLayer(_3M2Fline).setView([-0.00552, 0.00954], 16);
+                    
+                } 
+                else if (obj == '屋顶层') {
+                    map.addLayer(_WDFline).setView([-0.00552, 0.00954], 16);
+                }
+
+            }
+        }
+
+
+        //设置复选框样式
+        $('input[name="check-box"]').wrap('<div class="check-box"><i></i></div>');
+        $.fn.toggleCheckbox = function () {
+            this.prop('checked', !this.prop('checked'));
+
+
+        }
+        $('.check-box').on('click', function () {
+
+            $(this).find(':checkbox').toggleCheckbox();
+            $(this).toggleClass('checkedBox');
+
+            //复选框事件    
+            if (true == $(this).find('input').prop("checked")) {
+                LayerChecked($(this).find('input')[0].value);
+            } else {
+                LayerUnChecked($(this).find('input')[0].value);
+            }
+        });
+        //初始化时全选
+        $('.checkbox_3F').find('.check-box').each(function () {
+            $(this).toggleClass('checkedBox');
+            $(this).find('input').prop('checked', !$(this).find('input').prop('checked'));
+            LayerChecked($(this).find('input')[0].value);
+            //displayFeatures_c(geodata_f[floorSelected].features, $(this).find('input')[0].value);
+        })
+        
+        
+        map.addLayer(_3Fline);
+        
+        function LayerChecked(obj) {
+            if (obj) {
+                var cate = obj;
+                displayFeatures_f(geodata_f[floorSelected].features, layers, cate);
+            }
+        }
+
+        function LayerUnChecked(obj) {
+            //Remove Unchecked Layer layer.feature.properties.FILLCOLOR
+            map.eachLayer(function (layer) {
+                if (layer.hasOwnProperty("_url") == true) {
+                    if (layer._url.indexOf(obj) != -1) {
+                        map.removeLayer(layer);
+                    }
+                }
+                if (layer.hasOwnProperty("feature") == true) {
+                    if (obj == layer.feature.properties.REG_CATE) {
+                        map.removeLayer(layer);
+                    }
+                }
+
+            });
+
+        }
+    </script>
+    <script>
+        jQuery('body').removeClass('js');
+    </script>
+</body>
+
+</html>
