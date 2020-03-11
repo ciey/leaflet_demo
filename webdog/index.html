@@ -1,0 +1,743 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="keywords" content="123">
+    <meta name="description" content="">
+    <title>发现中国</title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/image/favicon.ico" type="image/x-icon">
+    
+    <link rel="stylesheet" href="//cdn.bootcss.com/leaflet/0.7.7/leaflet.css"/>
+    <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css"/>
+
+    <link rel="stylesheet" href="static/CACHE/css/1b5ea2bd7e5e.css" type="text/css" />
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top masthead">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand bold" href="/"><img src="/static/image/text-logo-small.png"></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/china" class="size16 hidden-md hidden-sm hidden-xs"> 中国历史地图 </a></li>
+                <li><a href="/map/recommend/" class="size16"> 推荐 </a></li>
+                <li><a href="/map/" class="size16"> 发现 </a></li>
+                
+            </ul>
+            
+    <div class="col-md-3 col-sm-3">
+        <form id="nav-search">
+            <div class="input-group hidden-xs">
+                <input type="text" class="form-control" placeholder="在这幅地图内搜索..." style="border-right: none">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit" style="width: 65px"><span
+                        class="glyphicon glyphicon-search text-primary"></span></button>
+            </span>
+            </div>
+        </form>
+    </div>
+
+            
+                <ul class="nav navbar-nav navbar-right" id="menu-user">
+                    
+    
+        <li><a id="map-save" href="#"><span class="glyphicon glyphicon-save"></span> 保存</a></li>
+        <li><a id="map-preview" href="/map/7035/" target="_blank"><span
+                class="glyphicon glyphicon-globe"></span> 预览</a></li>
+        
+            <li><a id="map-public" href="#" data="7035"><span class="glyphicon glyphicon-ok"></span> 发布</a>
+            </li>
+    
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                           style="padding-bottom: 6px; padding-top: 8px"><img
+                                src="/static/image/head.jpg"
+                                style="width:36px;height:36px;"> <span class="username">ciey</span> <span class="label label-primary">1级</span>
+                            
+                            <span class="caret"></span>
+                        </a>
+                        <input type='hidden' name='csrfmiddlewaretoken' value='63bPL7cHkSwaTzy4GWiXnZ1lEV44K3dH' />
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="drop4">
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/account/maps/">我的地图</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/account/favorites/">我的收藏</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/account/notifications/">我的消息
+                                </a></li>
+                            <li role="presentation" class="divider"></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/help/">使用帮助</a></li>
+                            <li role="presentation" class="divider"></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/account/head/">修改头像</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/account/password/">修改密码</a>
+                            </li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/account/logout/">退出</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row main-container">
+        
+    <div id="map-loading">
+        <div class="loading-bk"></div>
+        <div class="loading-img">
+            <img src="static/image/ajax-loader-grey.gif">
+        </div>
+    </div>
+    <div id="editable-tooltip"></div>
+    <div id="sidebar" class="sidebar collapsed">
+        <ul class="sidebar-tabs" role="tablist">
+            <li><a href="#map-node-panel" role="tab"><span class="glyphicon glyphicon-align-justify"></span></a></li>
+            <li><a href="#map-tile-panel" role="tab"><span class="glyphicon glyphicon-globe"></span></a></li>
+            <li><a href="#map-search-panel" role="tab"><span class="glyphicon glyphicon-search"></span></a></li>
+            <li><a href="#map-desc-panel" role="tab"><span class="glyphicon glyphicon-pencil"></span></a></li>
+            
+                <li><a href="#map-settings-panel" role="tab"><span class="glyphicon glyphicon-cog"></span></a></li>
+            
+        </ul>
+        <!-- Tab panes -->
+        <div class="sidebar-content active">
+            <div class="sidebar-pane" id="map-node-panel">
+                <div class="map-panel-title row">
+                    <div class="col-md-6">图层</div>
+                    <div class="col-md-6 text-right">
+                    </div>
+                </div>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">123</div>
+                        <div class="panel-body" id="node-tree"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-pane" id="map-tile-panel">
+                <div class="map-panel-title row">
+                    <div class="col-md-6">底图</div>
+                    <div class="col-md-6 text-right">
+                    </div>
+                </div>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">基础</div>
+                        <div class="tile-layer base-tile">
+                            <img v-bind:src="baseImage" width="100%">
+                            <span>{{ baseCN }}</span>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">高级</div>
+                        <div class="tile-layer high-tile">
+                            <img v-bind:src="highImage" width="100%">
+                            <span>{{ highCN }}</span>
+                        </div>
+                        <div class="panel-body opacity" style="border-top: 1px solid #ddd">
+                            地图透明度： <span>{{ opacity }}</span>
+                            <input type="range" name="points" min="0.1" max="1" step="0.1" v-model="opacity">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-pane" id="map-search-panel">
+                <div class="map-panel-title row">
+                    <div class="col-md-6">搜索</div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-default size14"
+                                style="border-radius: 50%;padding: 0;width: 30px;height: 30px"><span
+                                class="glyphicon glyphicon-remove text-muted"></span></button>
+                    </div>
+                </div>
+                <div class="panel-group">
+                    <div class="btn-group btn-group-justified" data-toggle="buttons" style="margin-bottom: 5px">
+                        <label class="btn btn-default active" style="border-right: none">
+                            <input type="radio" name="local" autocomplete="off" checked> 地图内部
+                        </label>
+                        <label class="btn btn-default" style="border-right: none">
+                            <input type="radio" name="global" autocomplete="off"> 全站地图
+                        </label>
+                        <label class="btn btn-default">
+                            <input type="radio" name="online" autocomplete="off"> 现代地图
+                        </label>
+                    </div>
+                    <div class="panel panel-default">
+                        
+                        <div class="text-center search-info" style="padding: 5px;">请在顶部搜索栏输入关键词</div>
+                        <div class="panel-body" id="search-tree">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-pane" id="map-desc-panel">
+                <div class="map-panel-title row">
+                    详细信息
+                </div>
+                <div class="panel-group">
+                    
+                        <div class="form-group">
+                            <label for="map-title">地图名称</label>
+                            <input v-model="title" lazy maxlength="32" type="text" class="form-control" id="map-title"
+                                   placeholder="地图名称,只能包含中文字符、字母、数字、-《》——：:">
+                        </div>
+                        <div class="form-group">
+                            <label for="map-markdown-editor">文字描述</label> <a class="float-right" target="_blank"
+                                                                             href="http://www.webdog.cn/blog/5/">Markdown语法说明</a>
+                            <textarea v-model="desc" lazy id="map-markdown-editor"
+                                      class="form-control"></textarea>
+                        </div>
+                    
+                </div>
+            </div>
+            
+                <div class="sidebar-pane" id="map-settings-panel">
+                    <div class="map-panel-title row">
+                        <div class="col-md-6">地图设置</div>
+                        <div class="col-md-6 text-right">
+                        </div>
+                    </div>
+                    <div class="panel-group">
+                        
+                        <div class="form-group radio" id="setting-timeline">
+                            <span class="bold">时间轴功能</span>
+                            <div class="btn-group float-right">
+                                <label class="btn active" value=0>关闭
+                                    <input v-model="timeline" number type="radio" name="timeline" value=0
+                                           autocomplete="off">
+                                </label>
+                                <label class="btn" value=1>开启
+                                    <input v-model="timeline" number type="radio" name="timeline" value=1
+                                           autocomplete="off">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group radio" id="setting-view">
+                            <span class="bold">地图默认视图</span><span class="glyphicon glyphicon-question-sign text-muted"
+                                                                  title="默认中心为全部地图元素的中心，默认放大级别能够包含全部地图元素"
+                                                                  data-toggle="tooltip" data-trigger="hover"
+                                                                  data-placement="right"></span>
+                            <div class="btn-group float-right">
+                                <label class="btn active" value="auto">自动
+                                    <input v-model="defaultView" type="radio" name="view" value="auto"
+                                           autocomplete="off">
+                                </label>
+                                <label class="btn" value="custom">手动
+                                    <input v-model="defaultView" type="radio" name="view" value="custom"
+                                           autocomplete="off">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group setting-view" style="display:none;">
+                            <label for="map-setting-center">默认地图中心</label>
+                            <div class="input-group">
+                                <input v-model="defaultCenter" type="text" class="form-control"
+                                       id="map-setting-center" disabled>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" id="map-setting-center-now"
+                                                v-on:click="setDefaultCenter"><span
+                                                class="glyphicon glyphicon-record"></span></button>
+                                    </span>
+                            </div>
+                        </div>
+                        <div class="form-group setting-view" style="display:none;">
+                            <label for="map-setting-zoom">默认放大级别</label>
+
+                            <div class="input-group">
+                                <input v-model="defaultZoom" number type="number" name="points" min="3"
+                                       max="18" step="1" class="form-control" id="map-setting-zoom">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" id="map-setting-zoom-now"
+                                                v-on:click="setDefaultZoom"><span
+                                                class="glyphicon glyphicon-record"></span></button>
+                                    </span>
+                            </div>
+                        </div>
+                        <div class="form-group" id="map-setting-level-1">
+                            <label>一级图层显示设置 </label> <span class="glyphicon glyphicon-question-sign text-muted"
+                                                           title="不同级别的图层可以分开显示，避免挤在一起" data-toggle="tooltip"
+                                                           data-trigger="hover" data-placement="right"></span>
+
+                            <div class="form-inline form-group-sm">
+                                <div class="input-group col-sm-6">
+                                    <input v-model="level1min" lazy number type="number" name="points" min="3"
+                                           max="18" step="1" class="form-control min">
+
+                                    <div class="input-group-addon" style="border-left: none;border-right: none">到
+                                    </div>
+                                    <input v-model="level1max" lazy number type="number" name="points" min="3"
+                                           max="18" step="1" class="form-control max">
+                                </div>
+                                <div class="input-group col-sm-5">
+                                    <div class="input-group-addon" style="width: 55px">字号</div>
+                                    <select v-model="level1size" class="form-control size" style="width: 87px">
+                                        <option v-for="option in sizeOptions" v-bind:value="option.value">
+                                            {{
+                                            option.text }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="map-setting-level-2">
+                            <label>二级图层显示设置 </label>
+
+                            <div class="form-inline form-group-sm">
+                                <div class="input-group col-sm-6">
+                                    <input v-model="level2min" lazy number type="number" name="points" min="3"
+                                           max="18" step="1" class="form-control min">
+
+                                    <div class="input-group-addon" style="border-left: none;border-right: none">到
+                                    </div>
+                                    <input v-model="level2max" lazy number type="number" name="points" min="3"
+                                           max="18" step="1" class="form-control max">
+                                </div>
+                                <div class="input-group col-sm-5">
+                                    <div class="input-group-addon" style="width: 55px">字号</div>
+                                    <select v-model="level2size" class="form-control size" style="width: 87px">
+                                        <option v-for="option in sizeOptions" v-bind:value="option.value">
+                                            {{
+                                            option.text }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="map-setting-level-3">
+                            <label>三级图层显示设置 </label>
+
+                            <div class="form-inline form-group-sm">
+                                <div class="input-group col-sm-6">
+                                    <input v-model="level3min" lazy number type="number" name="points" min="3"
+                                           max="18" step="1" class="form-control min">
+
+                                    <div class="input-group-addon" style="border-left: none;border-right: none">到
+                                    </div>
+                                    <input v-model="level3max" lazy number type="number" name="points" min="3"
+                                           max="18" step="1" class="form-control max">
+                                </div>
+                                <div class="input-group col-sm-5">
+                                    <div class="input-group-addon" style="width: 55px">字号</div>
+                                    <select v-model="level3size" class="form-control size" style="width: 87px">
+                                        <option v-for="option in sizeOptions" v-bind:value="option.value">
+                                            {{
+                                            option.text }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="map-setting-level-4">
+                            <label>四级图层显示设置 </label>
+
+                            <div class="form-inline form-group-sm">
+                                <div class="input-group col-sm-6">
+                                    <input v-model="level4min" lazy number type="number" name="points" min="3"
+                                           max="18" step="1" class="form-control min">
+
+                                    <div class="input-group-addon" style="border-left: none;border-right: none">到
+                                    </div>
+                                    <input v-model="level4max" lazy number type="number" name="points" min="3"
+                                           max="18" step="1" class="form-control max">
+                                </div>
+                                <div class="input-group col-sm-5">
+                                    <div class="input-group-addon" style="width: 55px">字号</div>
+                                    <select v-model="level3size" class="form-control size" style="width: 87px">
+                                        <option v-for="option in sizeOptions" v-bind:value="option.value">
+                                            {{
+                                            option.text }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+    <ul id="right-toolbar" class="list-unstyled">
+    <li id="toolbar-zoom-control">
+        <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+            <button type="button" class="btn btn-default zoom" data="plus" title="放大地图" data-toggle="tooltip"
+                        data-trigger="hover" data-placement="left"><span
+                    class="glyphicon glyphicon-plus"></span></button>
+            <button type="button" class="btn btn-default zoom" data="minus" title="缩小地图" data-toggle="tooltip"
+                        data-trigger="hover" data-placement="left"><span
+                    class="glyphicon glyphicon-minus"></span></button>
+        </div>
+    </li>
+    
+        <li id="toolbar-create-control">
+            <div class="btn-group-vertical create-layer" role="group" aria-label="Vertical button group">
+                <button type="button" class="btn btn-default" data="point" title="建立标记" data-toggle="tooltip"
+                        data-trigger="hover" data-placement="left"><span
+                        class="tool-icon created tool-icon-point"></span></button>
+                <button type="button" class="btn btn-default" data="polygon" title="建立边界" data-toggle="tooltip"
+                        data-trigger="hover" data-placement="left"><span
+                        class="tool-icon created tool-icon-polygon"></span></button>
+                <button type="button" class="btn btn-default" data="polyline" title="建立线条" data-toggle="tooltip"
+                        data-trigger="hover" data-placement="left"><span
+                        class="tool-icon created tool-icon-polyline"></span></button>
+            </div>
+        </li>
+    
+    <li>
+        <button type="button" class="btn btn-default" id="tile-image-btn" title="叠加本地图片作为底图" data-toggle="tooltip" data-trigger="hover"
+                data-placement="left"><span
+                class="glyphicon glyphicon-picture"></span></button>
+        <input type="file" id="tile-image-input" accept="image/png, image/jpeg" style="display: none">
+    </li>
+    <li>
+        <button type="button" class="btn btn-default" id="measure-tool-btn" title="测量距离" data-toggle="tooltip" data-trigger="hover"
+                data-placement="left"><span
+                class="icon icon-ruler"></span></button>
+    </li>
+</ul>
+<div id="node-panel" class="mini-scrollbar" style="display: none">
+    <a id="node-panel-close" href="#">×</a>
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#node-panel-name" aria-controls="home" role="tab"
+                                                  data-toggle="tab">名称</a>
+        </li>
+        <li role="presentation"><a href="#node-panel-style" aria-controls="profile" role="tab"
+                                   data-toggle="tab">样式</a>
+        </li>
+        
+        
+        
+        
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="node-panel-name">
+            <div class="form-group">
+                <div class="input-group">
+                    <input v-model="layerName | validName" type="text" class="form-control" id="layerName"
+                           maxlength="16"
+                           placeholder="名称,只能包含中文字符、字母、数字、-《》——：:">
+                          <span class="input-group-btn">
+                            <button v-on:click="insertImage"  id="layerImageInsert" class="btn btn-default" type="button" title="上传图片" data-toggle="tooltip" data-trigger="hover"
+                data-placement="left"><span class="glyphicon glyphicon-picture"></span></button>
+                          </span>
+                </div>
+            </div>
+            <div id="node-timeline">
+                <div class="form-group col-md-6" style="padding-left: 0;padding-right: 5px;">
+                    <label>开始时间</label>
+                    <input v-model="start | validDate 'start'" lazy id='nodeStart' type="text"
+                           class="form-control input-sm" placeholder="年;年-月;年-月-日">
+                </div>
+                <div class="form-group col-md-6" style="padding-left: 5px;padding-right: 0;">
+                    <label>结束时间</label>
+                    <input v-model="end | validDate 'end'" lazy id='nodeEnd' type="text" class="form-control input-sm"
+                           placeholder="必须在开始时间之后" disabled>
+                </div>
+            </div>
+            <div class="form-group" style="margin:0;"><textarea v-model="layerNote" lazy rows="10"
+                                                                class="form-control input-sm" maxlength="500"
+                                                                id="layerNote" placeholder="笔记...500字以内"></textarea>
+            </div>
+            <div id="layerImages"></div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="node-panel-style">
+            <div class="form-group color-setting polygon" id="fillColor" style="display: none">
+                <label>填充颜色</label>
+                <div class="btn-group"></div>
+            </div>
+            <div class="form-group polygon" style="display: none">
+                <label style="width: 100%">填充透明度： {{
+                    fillOpacity }}
+                    <input v-model="fillOpacity" type="range" name="fillOpacity" min="0.1" max="1"
+                           step="0.1"></label>
+            </div>
+            <div class="form-group point polygon polyline color-setting" id="color" style="display: none">
+                <label>颜色</label>
+                <div class="btn-group"></div>
+            </div>
+            <div class="form-group polygon polyline" style="display: none">
+                <label style="width: 100%">透明度：{{
+                    opacity }}
+                    <input v-model="opacity" type="range" name="opacity" min="0.1" max="1" step="0.1"></label>
+            </div>
+            <div class="form-group polygon polyline" style="display: none">
+                <label style="width: 100%">线条宽度： {{
+                    weight }}
+                    <input v-model="weight" type="range" name="weight" min="1" max="8" step="1" value="3"></label>
+            </div>
+            <div class="form-group polygon polyline" id="dashArray" style="display: none">
+                <label>线条样式</label>
+                <div class="btn-group">
+                    <label class="btn active" value=1 style="width: 25%">
+                        <svg height="10px" width="50px">
+                            <path stroke="#333" stroke-width="3" d="M0 5L60 5"></path>
+                        </svg>
+                        <input v-model="dashArray" type="radio" name="dashArray" value=1 autocomplete="off">&nbsp;
+                    </label>
+                    <label class="btn" value=2 style="width: 25%">
+                        <svg height="10px" width="50px">
+                            <path stroke="#333" stroke-width="3" d="M0 5L60 5" stroke-dasharray="6"></path>
+                        </svg>
+                        <input v-model="dashArray" type="radio" name="dashArray" value=2 autocomplete="off">&nbsp;
+                    </label>
+                    <label class="btn" value=3 style="width: 25%">
+                        <svg height="10px" width="50px">
+                            <path stroke="#333" stroke-width="3" d="M0 5L60 5" stroke-dasharray="9 6 3 6"></path>
+                        </svg>
+                        <input v-model="dashArray" type="radio" name="dashArray" value=3 autocomplete="off">&nbsp;
+                    </label>
+                    <label class="btn" value=4 style="width: 25%">
+                        <svg height="10px" width="50px">
+                            <path stroke="#333" stroke-width="3" d="M0 5L60 5"
+                                  stroke-dasharray="12 3 3 3 3 3"></path>
+                        </svg>
+                        <input v-model="dashArray" type="radio" name="dashArray" value=4 autocomplete="off">&nbsp;
+                    </label>
+                </div>
+            </div>
+            <div class="form-group radio point" id="marker">
+                <span>类型</span>
+                <div class="btn-group">
+                    <label class="btn active" value='text'>文字
+                        <input v-model="marker" type="radio" name="marker" value='text' autocomplete="off">
+                    </label>
+                    <label class="btn" value='icon'>图标
+                        <input v-model="marker" type="radio" name="marker" value='icon' autocomplete="off">
+                    </label>
+                    <label class="btn" value='mix'>混合
+                        <input v-model="marker" type="radio" name="marker" value='mix' autocomplete="off">
+                    </label>
+                </div>
+            </div>
+            <div class="form-group radio point" id="size">
+                <span>大小</span>
+                <div class="btn-group">
+                    <label class="btn active" value='auto'>自动<input v-model="size" type="radio" name="size"
+                                                                    value='auto'
+                                                                    autocomplete="off">
+                    </label>
+                    <label class="btn" value='xs'>最小<input v-model="size" type="radio" name="size" value='xs'
+                                                           autocomplete="off">
+                    </label>
+                    <label class="btn" value='s'>小<input v-model="size" type="radio" name="size" value='s'
+                                                         autocomplete="off">
+                    </label>
+                    <label class="btn" value='m'>中<input v-model="size" type="radio" name="size" value='m'
+                                                         autocomplete="off">
+                    </label>
+                    <label class="btn" value='l'>大<input v-model="size" type="radio" name="size" value='l'
+                                                         autocomplete="off">
+                    </label>
+                    <label class="btn" value='xl'>最大<input v-model="size" type="radio" name="size" value='xl'
+                                                           autocomplete="off">
+                    </label>
+                </div>
+            </div>
+            <div class="form-group radio polyline" id="arrow">
+                <span>箭头</span>
+                <div class="btn-group">
+                    <label class="btn active" value=0>关闭
+                        <input v-model="arrow" type="radio" name="marker" value=0 autocomplete="off">
+                    </label>
+                    <label class="btn" value=1>开启
+                        <input v-model="arrow" type="radio" name="marker" value=1 autocomplete="off">
+                    </label>
+                </div>
+            </div>
+            <div class="form-group point" id="icon" style="display: none">
+            </div>
+        </div>
+        
+        
+    </div>
+
+</div>
+    <div class="modal fade" id="image-insert" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">插入图片</h4>
+            </div>
+            <div class="modal-body">
+                <div class="image-show"></div>
+                <div class="form-group" id="image-insert-link-group">
+                    <label>图片URL地址</label>
+                    <input type="text" class="form-control" id="link-field" placeholder="必须以http://开头">
+                </div>
+                <div class="form-group" id="image-insert-link-group">
+                    <label>图片描述文字</label>
+                    <input type="text" class="form-control" id="link-note" maxlength="64" placeholder="图片描述文字">
+                </div>
+                
+                    <div>4级用户支持上传本地图片</div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="image-insert-button">插入</button>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <div class="modal fade" id="input-map-title" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">地图名称</h4>
+            </div>
+            <div class="modal-body">
+                <input v-model="title" lazy type="text" class="form-control">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+    <div class="modal fade modal-tilelayer" id="input-base-tilelayer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title bold" id="mySmallModalLabel">基础底图</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#base-tile-qq" aria-controls="base-tile-qq" role="tab" data-toggle="tab">腾讯地图</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#base-tile-google" aria-controls="base-tile-google" role="tab" data-toggle="tab">谷歌地图</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#base-tile-tianditu" aria-controls="base-tile-tianditu" role="tab" data-toggle="tab">天地图</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#base-tile-webdog" aria-controls="base-tile-webdog" role="tab" data-toggle="tab">发现中国</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="base-tile-qq"><div class="row"></div></div>
+                    <div role="tabpanel" class="tab-pane" id="base-tile-google"><div class="row"></div></div>
+                    <div role="tabpanel" class="tab-pane" id="base-tile-tianditu"><div class="row"></div></div>
+                    <div role="tabpanel" class="tab-pane" id="base-tile-webdog"><div class="row"></div></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">退出</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade modal-tilelayer" id="input-high-tilelayer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title bold" id="mySmallModalLabel">高级底图</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#high-tile-maplet" aria-controls="high-tile-maplet" role="tab" data-toggle="tab">Maplet地图画板</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#high-tile-ccts" aria-controls="high-tile-ccts" role="tab" data-toggle="tab">台湾中研院</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#high-tile-webdog" aria-controls="high-tile-webdog" role="tab" data-toggle="tab">发现中国</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="high-tile-maplet">
+                        <div class="row"></div>
+                        <div style="text-align: center">
+                            特别感谢：<a href="http://www.maplet.org/" target="_blank">Maplet 地图画板</a> 提供历史地图接口
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="high-tile-ccts">
+                        <div class="row"></div>
+                        <div style="text-align: center">
+                            特别感谢：<a href="http://www.sinica.edu.tw/index.shtml" target="_blank">台湾中央研究院</a>，
+                            《<a href="http://ccts.sinica.edu.tw/index.php?lang=zh-tw" target="_blank">中化文明之时空基础架构系统</a>》第一版，（台北，2002年9月）
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="high-tile-webdog"><div class="row"></div></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">退出</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="map-canvas" style="position: fixed;width: 100%;top: 51px;bottom: 0"></div>
+    <div id="map-timeline" class="hidden" style="position: fixed;height: 85px;width:100%;bottom: 0; z-index: 1;">
+    <div class="timeline-date" style="position:absolute;top: 0;left: 0;margin: 10px;z-index: 1">
+        当前时间：<span class="brown blod"></span>
+    </div>
+    <div class="timeline-menu" style="position:absolute;top: 0;right: 0;margin: 10px;z-index: 901">
+        <div class="btn-group dropup">
+            <button id="map-timeline-play" class="btn btn-primary btn-xs" data="stop">播放</button>
+            <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li value="12.5" unit="y"><a href="#">按100年播放</a></li>
+                <li value="1.25" unit="y"><a href="#">按10年播放</a></li>
+                <li value="45" unit="d"><a href="#">按年播放</a></li>
+                <li value="11" unit="d"><a href="#">按季播放</a></li>
+                <li value="4" unit="d"><a href="#">按月播放</a></li>
+                <li value="1" unit="d"><a href="#">按周播放</a></li>
+                <li value="3" unit="h"><a href="#">按天播放</a></li>
+            </ul>
+        </div>
+
+    </div>
+    <div id="timeline-slider" style="position: relative;bottom: 0px;background-color: DodgerBlue;width: 100%;height: 3px;z-index: 2;cursor: n-resize;"></div>
+</div>
+
+    </div>
+</div>
+
+
+    
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <script src="//cdn.bootcss.com/vue/1.0.24/vue.min.js"></script>
+    <script src="//cdn.bootcss.com/jqtree/1.3.2/tree.jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    
+        <script src="//cdn.bootcss.com/leaflet/0.7.7/leaflet.js"></script>
+        <script src="//cdn.bootcss.com/leaflet-editable/0.6.2/Leaflet.Editable.min.js"></script>
+    
+
+<script type="text/javascript" src="static/CACHE/js/96f263a85c99.js"></script>
+
+</body>
+</html>
